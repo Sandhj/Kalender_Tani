@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalender {{ year }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Kalender {{ year }}</h1>
+
+    <h2>Tambah Tugas</h2>
+    <form action="/add_task" method="post">
+        <input type="text" name="title" placeholder="Nama Tugas" required>
+        <input type="date" name="date" required>
+        <input type="color" name="color">
+        <button type="submit">Tambah</button>
+    </form>
+
+    <h2>Tambah Tugas Otomatis</h2>
+    <form action="/add_task_auto" method="post">
+        <input type="text" name="title" placeholder="Nama Tugas" required>
+        <input type="date" name="start_date" required>
+        <input type="number" name="interval" placeholder="Interval (hari)" required>
+        <input type="number" name="duration_months" placeholder="Durasi (bulan)" required>
+        <input type="color" name="color">
+        <button type="submit">Tambah</button>
+    </form>
+
+    <h2>Kalender</h2>
+    <div class="calendar">
+        {% for month in range(1, 13) %}
+            <div class="month">
+                <h3>{{ month }}/{{ year }}</h3>
+                <div class="days">
+                    {% for day in range(1, 32) %}
+                        {% set task = tasks | selectattr("date", "equalto", year|string + "-" + month|string.zfill(2) + "-" + day|string.zfill(2)) | list | first %}
+                        {% if task %}
+                            <div class="day" style="background-color: {{ task.color }};">
+                                {{ day }}<br>{{ task.title }}
+                            </div>
+                        {% else %}
+                            <div class="day">{{ day }}</div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
